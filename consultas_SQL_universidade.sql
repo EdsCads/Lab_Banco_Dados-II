@@ -1,3 +1,4 @@
+use universidade;
 -- 1. Obter o os nomes dos professores que são do departamento denominado 'Informática', sejam doutores,
 -- e que, em 932 (2osemestre de 1993),ministraram alguma turma de disciplina do departamento 'Informática' 
 -- que tenha mais que três créditos.
@@ -10,12 +11,12 @@ WHERE profturma.codDepto=(
     FROM depto 
     WHERE depto.nomeDepto='informatica'
     )
+and profTurma.anoSem='932'
 and disciplina.codDepto=(
 	SELECT depto.codDepto 
     FROM depto 
     WHERE depto.nomeDepto='informatica'
     )
-and profTurma.anoSem='932'
 and disciplina.creditosDisc>3
 and disciplina.numDisc=profturma.numDisc;
 
@@ -69,4 +70,51 @@ WHERE disciplina.codDepto=(
 and creditosDisc=(
 	SELECT max(creditosDisc)
     FROM disciplina
+    );
+    
+-- 5. Para cada departamento, obter seu nome e o número de disciplinas do departamento. Obter o resultado em ordem descendente de número de 
+-- créditos.
+SELECT nomeDepto, count(numDisc) 
+FROM depto
+LEFT JOIN disciplina
+ON depto.codDepto=disciplina.codDepto
+GROUP BY nomeDepto;
+
+-- 6. Nomes dos departamentos que possuem disciplinas que não apresentam pré requisito.
+
+-- 7. Obter os códigos dos professores que são do departamento de 'Informática' e que ministraram ao menos uma turma em 1994/1.
+SELECT professor.codProf
+FROM `universidade`.`professor`
+JOIN profturma
+ON profturma.codProf=professor.codProf and profturma.anoSem='941'
+WHERE professor.codDepto=(
+	SELECT depto.codDepto 
+    FROM depto 
+    WHERE depto.nomeDepto='informatica'
+    )
+GROUP BY professor.codProf;
+
+-- 8. Obtenha os nomes dos departamentos em que há pelo menos uma disciplina com mais de três créditos.
+SELECT nomeDepto
+FROM depto
+WHERE EXISTS(SELECT disciplina.codDepto 
+    FROM disciplina 
+    WHERE disciplina.codDepto=depto.codDepto
+    and disciplina.creditosDisc>3
+    );
+    
+-- 9. Obter os identificadores das salas (código do prédio e número da sala) que, em 1994/1: nas segundas-feiras (dia da semana = 2),
+-- tiveram ao menos uma turma do departamento 'Informática'.
+SELECT sala.*
+FROM sala
+WHERE EXISTS(
+	SELECT horario.numSala 
+    FROM horario 
+    WHERE horario.codDepto=(
+		SELECT depto.codDepto 
+		FROM depto 
+		WHERE depto.nomeDepto='informatica'
+		)
+    and horario.diaSem='2'
+    and horario.anoSem='941'
     );
