@@ -81,6 +81,14 @@ ON depto.codDepto=disciplina.codDepto
 GROUP BY nomeDepto;
 
 -- 6. Nomes dos departamentos que possuem disciplinas que não apresentam pré requisito.
+SELECT nomeDepto
+FROM depto 
+WHERE EXISTS(
+	SELECT disciplina.codDepto
+	FROM disciplina,prereq
+    WHERE prereq.codDepto!=disciplina.codDepto and prereq.numDisc!=disciplina.numDisc
+    );
+
 
 -- 7. Obter os códigos dos professores que são do departamento de 'Informática' e que ministraram ao menos uma turma em 1994/1.
 SELECT professor.codProf
@@ -103,18 +111,30 @@ WHERE EXISTS(SELECT disciplina.codDepto
     and disciplina.creditosDisc>3
     );
     
--- 9. Obter os identificadores das salas (código do prédio e número da sala) que, em 1994/1: nas segundas-feiras (dia da semana = 2),
--- tiveram ao menos uma turma do departamento 'Informática'.
-SELECT sala.*
+-- 9. Obter os identificadores das salas (código do prédio e número da sala) que,
+-- em 1994/1: nas segundas-feiras (dia da semana = 2), tiveram ao menos uma turma
+-- do departamento 'Informática'.
+SELECT sala.codPred,sala.numSala
 FROM sala
-WHERE EXISTS(
-	SELECT horario.numSala 
-    FROM horario 
-    WHERE horario.codDepto=(
-		SELECT depto.codDepto 
-		FROM depto 
-		WHERE depto.nomeDepto='informatica'
-		)
-    and horario.diaSem='2'
-    and horario.anoSem='941'
-    );
+INNER JOIN horario
+ON horario.numSala=sala.numSala 
+and horario.codPred=sala.codPred
+and horario.codDepto=(
+	SELECT depto.codDepto 
+	FROM depto 
+	WHERE depto.nomeDepto='informatica'
+	)
+and horario.diaSem='2'
+and horario.anoSem='941';
+    
+-- 10. Mostre a ocupação média das salas em cada prédio no primeiro semestre de 1994.
+
+-- 11. Para cada prédio, liste a sala que tem a maior capacidade.
+
+-- 12. Qual é a sala mais utilizada? Liste o número da sala e quantas vezes ela foi usada.
+
+-- 13. Liste o número da sala e quantas vezes ela foi usada (ordem decrescente).
+
+-- 14. Crie duas visões para as seguintes consultas:
+-- ● Obter o código da sala e o código do prédio, desde que a salatenha capacidade superior a 35 lugares.
+-- ● Sabendo que cada crédito de disciplina corresponde a 15 hora/aula,retorne o nome da disciplina e o seu número de horas-aula.
