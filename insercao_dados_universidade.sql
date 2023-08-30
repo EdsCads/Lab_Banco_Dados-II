@@ -23,3 +23,14 @@ VALUES
 ('941', 'INF01', '106', 'U', '4','14','2','43421', '105'),
 ('941', 'INF01', '102', 'A', '4','18','2','43421', '107'),
 ('941', 'INF01', '101', 'U', '4','14','2','43421', '102');
+
+INSERT INTO `universidade`.`disciplina`
+(`codDepto`,
+`numDisc`,
+`nomeDisc`,
+`creditosDisc`)
+VALUES
+('FIS01',
+'101',
+'Física Experimental.',
+'2');
